@@ -1,0 +1,71 @@
+version: '3'
+services:
+  producer:
+    build: ./producer
+    hostname: producer
+    ports:
+      - "9999:9999"
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+    networks:
+      - bigdata-net
+
+  namenode:
+    image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
+    container_name: namenode
+    environment:
+      - CLUSTER_NAME=test
+      - HDFS_CONF_dfs_permissions_enabled=false
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:8020 
+    ports:
+      - "9870:9870"
+      - "9000:9000"
+      - "8020:8020"
+    networks:
+      - bigdata-net
+
+  datanode:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    container_name: datanode
+    environment:
+      - SERVICE_PRECONDITION=namenode:9870
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:8020 
+    depends_on:
+      - namenode
+    networks:
+      - bigdata-net
+
+  spark-master:
+    image: apache/spark:3.5.0
+    container_name: spark-master
+    user: root
+    environment:
+      - SPARK_MASTER_HOST=spark-master
+    ports:
+      - "8080:8080"
+      - "7077:7077"
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master
+    volumes:
+      - ./spark:/opt/spark/work-dir
+    networks:
+      - bigdata-net
+
+  spark-worker:
+    image: apache/spark:3.5.0
+    user: root
+    depends_on:
+      - spark-master
+    environment:
+      - SPARK_MASTER_URL=spark://spark-master:7077
+      - SPARK_WORKER_CORES=1
+      - SPARK_WORKER_MEMORY=1G
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
+    volumes:
+      - ./spark:/opt/spark/work-dir
+    networks:
+      - bigdata-net
+
+networks:
+  bigdata-net:
+    driver: bridge
