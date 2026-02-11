@@ -1,50 +1,52 @@
-# Big Data Pipeline: Kafka to HDFS via Spark Streaming 
+# Big Data Pipeline: Kafka to HDFS via Spark Streaming
 
-Ce projet met en place une architecture Big Data complète permettant de simuler la génération de données, leur ingestion en temps réel via **Kafka**, leur traitement avec **Spark Streaming**, et enfin leur stockage persistant dans **HDFS**.
+This project implements a complete Big Data architecture allowing for data generation simulation, real-time ingestion via **Kafka**, processing with **Spark Streaming**, and finally, persistent storage in **HDFS**.
 
-## 🏗️ Architecture du Système
+## 🏗️ System Architecture
 
-Le pipeline se compose des couches suivantes :
+The pipeline consists of the following layers:
 
-* **Générateur (Producer)** : Un script Python qui simule l'envoi de données vers Kafka.
-* **Ingestion (Kafka)** : Gère les flux de données en temps réel via un broker et Zookeeper.
-* **Traitement (Spark)** : Un processeur Spark Streaming qui consomme les messages Kafka et les traite.
-* **Stockage (HDFS)** : Un cluster Hadoop (Namenode + Datanode) pour le stockage distribué des données finales.
+* **Generator (Producer)**: A Python script that simulates sending data to Kafka.
+* **Ingestion (Kafka)**: Manages real-time data streams via a broker and Zookeeper.
+* **Processing (Spark)**: A Spark Streaming processor that consumes and processes Kafka messages.
+* **Storage (HDFS)**: A Hadoop cluster (Namenode + Datanode) for distributed storage of the final data.
 
-## 🛠️ Technologies Utilisées
+## 🛠️ Technologies Used
 
-* **Apache Kafka & Zookeeper** : Ingestion et messagerie.
-* **Apache Spark** : Traitement de flux (PySpark).
-* **Hadoop HDFS** : Système de fichiers distribué.
-* **Docker & Docker Compose** : Conteneurisation et orchestration.
+* **Apache Kafka & Zookeeper**: Ingestion and messaging.
+* **Apache Spark**: Stream processing (PySpark).
+* **Hadoop HDFS**: Distributed file system.
+* **Docker & Docker Compose**: Containerization and orchestration.
 
-## 🚀 Installation et Lancement
+## 🚀 Installation and Launch
 
-Grâce à Docker Compose, vous pouvez lancer l'intégralité de l'infrastructure (6 services) avec une seule commande :
+Thanks to Docker Compose, you can launch the entire infrastructure (6 services) with a single command:
 
 ```bash
-# Lancement de tous les services (Kafka, Spark, Hadoop, Producer)
+# Launching all services (Kafka, Spark, Hadoop, Producer)
 docker-compose up --build
 
 ```
 
-### Services déployés :
+### Deployed Services:
 
-* **Namenode** : Port `9870` (Interface Web Hadoop).
-* **Datanode** : Stockage des blocs de données.
-* **Kafka Broker** : Port `9092`.
-* **Zookeeper** : Port `2181`.
-* **Spark Master** : Gestion du cluster Spark.
-* **Producer** : Service Python automatique.
+* **Namenode**: Port `9870` (Hadoop Web Interface).
+* **Datanode**: Storage of data blocks.
+* **Kafka Broker**: Port `9092`.
+* **Zookeeper**: Port `2181`.
+* **Spark Master**: Spark cluster management.
+* **Producer**: Automatic Python service.
 
-## 📂 Structure du Repository
+## 📂 Repository Structure
 
-* `docker-compose.yml` : Orchestration de l'infrastructure complète.
-* `/producer` : Contient le `Dockerfile` et `main.py` pour la génération des données.
-* `/spark` : Contient `processor.py` pour la logique de traitement en streaming.
+* `docker-compose.yml`: Orchestration of the complete infrastructure.
+* `/producer`: Contains the `Dockerfile` and `main.py` for data generation.
+* `/spark`: Contains `processor.py` for the streaming processing logic.
 
-## 📊 Flux de Données
+## 📊 Data Flow
 
-1. Le service **Producer** génère des messages et les publie dans un topic Kafka.
-2. Le **Spark Processor** lit ces messages en continu depuis Kafka.
-3. Après transformation, les données sont écrites de manière distribuée dans le cluster **HDFS**.
+1. The **Producer** service generates messages and publishes them to a Kafka topic.
+2. The **Spark Processor** reads these messages continuously from Kafka.
+3. After transformation, the data is written in a distributed manner within the **HDFS** cluster.
+
+---
